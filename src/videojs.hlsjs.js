@@ -140,6 +140,13 @@ var HlsSourceHandler = {
     }
   },
   handleSource: function(source, tech) {
+    if (tech.name === 'Flash') {
+      // We need to trigger this asynchronously to give others the chance
+      // to bind to the event when a source is set at player creation
+      tech.setTimeout(function() {
+        tech.trigger('loadstart');
+      }, 1);
+    }
     return new Html5HlsJS(source, tech);
   },
   canPlayType: function(type) {
@@ -163,6 +170,13 @@ if (Hls.isSupported()) {
 
     if (html5Tech) {
       html5Tech.registerSourceHandler(HlsSourceHandler, 0);
+    }
+
+    var flashTech = videojs.getTech && videojs.getTech('Flash'); // videojs6 (partially on videojs5 too)
+    flashTech = flashTech || (videojs.getComponent && videojs.getComponent('Flash')); // videojs5
+
+    if (flashTech) {
+      flashTech.registerSourceHandler(HlsSourceHandler);
     }
   }
   else {
