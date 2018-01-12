@@ -118,7 +118,11 @@ function Html5HlsJS(source, tech) {
 
   // attach hlsjs to videotag
   hls.attachMedia(el);
+  console.log('ATTACH MEDIA');
+  console.log(el);
   hls.loadSource(source.src);
+  console.log('LOAD SOURCE');
+  console.log(source.src);
 }
 
 var hlsTypeRE = /^application\/(x-mpegURL|vnd\.apple\.mpegURL)$/i;
