@@ -120,11 +120,16 @@ function Html5HlsJS(source, tech) {
 
   // attach hlsjs to videotag
   hls.attachMedia(el);
-  console.log('ATTACH MEDIA');
-  console.log(el);
   hls.loadSource(source.src);
-  console.log('LOAD SOURCE');
-  console.log(source.src);
+
+  if (tech.name === 'Flash') {
+    window.MediaSource = FlashMediaSource;
+    var bufferController = hls.coreComponents.find(function (c) { return !!c['createSourceBuffers'] });
+    var srcUrl = URL.createObjectURL(bufferController.mediaSource);
+    console.log('INCOMING SOURCE URL');
+    console.log(srcUrl);
+    tech.src(srcUrl);
+  }
 }
 
 var hlsTypeRE = /^application\/(x-mpegURL|vnd\.apple\.mpegURL)$/i;
@@ -146,13 +151,6 @@ var HlsSourceHandler = {
     }
   },
   handleSource: function(source, tech) {
-    if (tech.name === 'Flash') {
-      // We need to trigger this asynchronously to give others the chance
-      // to bind to the event when a source is set at player creation
-      tech.setTimeout(function() {
-        tech.trigger('loadstart');
-      }, 1);
-    }
     return new Html5HlsJS(source, tech);
   },
   canPlayType: function(type) {
