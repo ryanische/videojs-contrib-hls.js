@@ -116,6 +116,8 @@ function Html5HlsJS(source, tech) {
     };
   }
 
+  console.log(hls.coreComponents);
+
   // attach hlsjs to videotag
   hls.attachMedia(el);
   console.log('ATTACH MEDIA');
