@@ -136,6 +136,7 @@ var hlsExtRE = /\.m3u8/i;
 
 var HlsSourceHandler = {
   canHandleSource: function(source) {
+    console.log('CAN HANDLE SOURCE');
     if (source.skipContribHlsJs) {
       return '';
     }
@@ -150,6 +151,7 @@ var HlsSourceHandler = {
     }
   },
   handleSource: function(source, tech) {
+    console.log('HANDLING SOURCE');
     return new Html5HlsJS(source, tech);
   },
   canPlayType: function(type) {
@@ -179,6 +181,7 @@ if (Hls.isSupported()) {
     flashTech = flashTech || (videojs.getComponent && videojs.getComponent('Flash')); // videojs5
 
     if (flashTech) {
+      console.log('REGISTERED SOURCE HANDLER');
       flashTech.registerSourceHandler(HlsSourceHandler);
     }
   }
