@@ -122,8 +122,7 @@ function Html5HlsJS(source, tech) {
   hls.attachMedia(el);
   hls.loadSource(source.src);
 
-  if (tech.name === 'Flash') {
-    window.MediaSource = FlashMediaSource;
+  if (true) {
     var bufferController = hls.coreComponents.find(function (c) { return !!c['createSourceBuffers'] });
     var srcUrl = URL.createObjectURL(bufferController.mediaSource);
     console.log('INCOMING SOURCE URL');
