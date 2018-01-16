@@ -123,7 +123,9 @@ function Html5HlsJS(source, tech) {
   hls.loadSource(source.src);
 
   if (true) {
-    var bufferController = hls.coreComponents.find(function (c) { return !!c['createSourceBuffers'] });
+    var bufferController = hls.coreComponents.find(function (c) { return typeof c.createSourceBuffers === 'function' });
+    console.log('BUFFER CONTROLLER');
+    console.log(bufferController);
     var srcUrl = URL.createObjectURL(bufferController.mediaSource);
     console.log('INCOMING SOURCE URL');
     console.log(srcUrl);
