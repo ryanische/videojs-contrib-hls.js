@@ -163,26 +163,26 @@ var HlsSourceHandler = {
   }
 };
 
+var videojs = require('video.js'); // resolved UMD-wise through webpack
+
+// support es6 style import
+videojs = videojs && videojs.default || videojs;
+
+var flashTech = videojs.getTech && videojs.getTech('Flash'); // videojs6 (partially on videojs5 too)
+flashTech = flashTech || (videojs.getComponent && videojs.getComponent('Flash')); // videojs5
+
+if (flashTech) {
+  console.log('REGISTERED SOURCE HANDLER');
+  flashTech.registerSourceHandler(HlsSourceHandler);
+}
+
 if (Hls.isSupported()) {
-  var videojs = require('video.js'); // resolved UMD-wise through webpack
-
-  // support es6 style import
-  videojs = videojs && videojs.default || videojs;
-
   if (videojs) {
     var html5Tech = videojs.getTech && videojs.getTech('Html5'); // videojs6 (partially on videojs5 too)
     html5Tech = html5Tech || (videojs.getComponent && videojs.getComponent('Html5')); // videojs5
 
     if (html5Tech) {
       html5Tech.registerSourceHandler(HlsSourceHandler, 0);
-    }
-
-    var flashTech = videojs.getTech && videojs.getTech('Flash'); // videojs6 (partially on videojs5 too)
-    flashTech = flashTech || (videojs.getComponent && videojs.getComponent('Flash')); // videojs5
-
-    if (flashTech) {
-      console.log('REGISTERED SOURCE HANDLER');
-      flashTech.registerSourceHandler(HlsSourceHandler);
     }
   }
   else {
