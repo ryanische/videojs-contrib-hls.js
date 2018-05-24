@@ -84,9 +84,6 @@ function Html5HlsJS(source, tech) {
   hls.on(Hls.Events.ERROR, function(event, data) {
     if (data.fatal) {
       switch (data.type) {
-        case Hls.ErrorTypes.NETWORK_ERROR:
-          hls.startLoad();
-          break;
         case Hls.ErrorTypes.MEDIA_ERROR:
           hlsjsErrorHandler();
           break;
