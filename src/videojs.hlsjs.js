@@ -89,6 +89,8 @@ function Html5HlsJS(source, tech) {
           break;
         default:
           console.error('Error loading media: File could not be played');
+          console.log(event);
+          console.log(data);
           break;
       }
     }
