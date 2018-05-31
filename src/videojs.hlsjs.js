@@ -84,13 +84,16 @@ function Html5HlsJS(source, tech) {
   hls.on(Hls.Events.ERROR, function(event, data) {
     if (data.fatal) {
       switch (data.type) {
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          console.log(event);
+          console.log(data);
+          hls.startLoad();
+          break;
         case Hls.ErrorTypes.MEDIA_ERROR:
           hlsjsErrorHandler();
           break;
         default:
           console.error('Error loading media: File could not be played');
-          console.log(event);
-          console.log(data);
           break;
       }
     }
@@ -115,9 +118,21 @@ function Html5HlsJS(source, tech) {
     };
   }
 
+  console.log(hls.coreComponents);
+
   // attach hlsjs to videotag
   hls.attachMedia(el);
   hls.loadSource(source.src);
+
+  if (true) {
+    var bufferController = hls.coreComponents.find(function (c) { return typeof c.createSourceBuffers === 'function' });
+    console.log('BUFFER CONTROLLER');
+    console.log(bufferController);
+    var srcUrl = URL.createObjectURL(bufferController.mediaSource);
+    console.log('INCOMING SOURCE URL');
+    console.log(srcUrl);
+    tech.src(srcUrl);
+  }
 }
 
 var hlsTypeRE = /^application\/(x-mpegURL|vnd\.apple\.mpegURL)$/i;
@@ -125,6 +140,7 @@ var hlsExtRE = /\.m3u8/i;
 
 var HlsSourceHandler = {
   canHandleSource: function(source) {
+    console.log('CAN HANDLE SOURCE');
     if (source.skipContribHlsJs) {
       return '';
     }
@@ -139,6 +155,7 @@ var HlsSourceHandler = {
     }
   },
   handleSource: function(source, tech) {
+    console.log('HANDLING SOURCE');
     return new Html5HlsJS(source, tech);
   },
   canPlayType: function(type) {
@@ -150,12 +167,20 @@ var HlsSourceHandler = {
   }
 };
 
+var videojs = require('video.js'); // resolved UMD-wise through webpack
+
+// support es6 style import
+videojs = videojs && videojs.default || videojs;
+
+var flashTech = videojs.getTech && videojs.getTech('Flash'); // videojs6 (partially on videojs5 too)
+flashTech = flashTech || (videojs.getComponent && videojs.getComponent('Flash')); // videojs5
+
+if (flashTech) {
+  console.log('REGISTERED SOURCE HANDLER');
+  flashTech.registerSourceHandler(HlsSourceHandler);
+}
+
 if (Hls.isSupported()) {
-  var videojs = require('video.js'); // resolved UMD-wise through webpack
-
-  // support es6 style import
-  videojs = videojs && videojs.default || videojs;
-
   if (videojs) {
     var html5Tech = videojs.getTech && videojs.getTech('Html5'); // videojs6 (partially on videojs5 too)
     html5Tech = html5Tech || (videojs.getComponent && videojs.getComponent('Html5')); // videojs5
